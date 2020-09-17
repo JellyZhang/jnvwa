@@ -1,8 +1,10 @@
 package db
 
 import (
+	"log"
 	"testing"
 
+	"github.com/robfig/config"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -18,20 +20,24 @@ func TestConnectMysql(t *testing.T) {
 		name string
 		args args
 	}{
-		//{
-		//name: "连接成功",
-		//args: args{
-		//host:     "10.129.50.89",
-		//port:     3306,
-		//username: "root",
-		//password: "123456",
-		//dbName:   "mybase",
-		//},
-		//},
+		{
+			name: "连接成功",
+			args: args{},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mh := GetMysqlHandler(tt.args.host, tt.args.port, tt.args.username, tt.args.password, tt.args.dbName)
+			c, err := config.ReadDefault("../jnvwa.cfg")
+			if err != nil {
+				log.Printf("err=%v", err)
+				return
+			}
+			host, _ := c.String("mysql", "host")
+			port, _ := c.Int("mysql", "port")
+			username, _ := c.String("mysql", "username")
+			password, _ := c.String("mysql", "password")
+			dbName, _ := c.String("mysql", "dbname")
+			mh := GetMysqlHandler(host, int32(port), username, password, dbName)
 			db := mh.GetDB()
 			assert.NotEqual(t, db, nil)
 		})
