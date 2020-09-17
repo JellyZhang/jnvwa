@@ -2,7 +2,6 @@ package db
 
 import (
 	"fmt"
-	"log"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -12,21 +11,59 @@ const (
 	timeout = "10s" //连接超时，10秒
 )
 
-// 连接Mysql
-func ConnectMysql(host string, port int32, username, password, dbName string) (*gorm.DB, error) {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?parseTime=True&loc=Local&timeout=%s",
-		username,
-		password,
-		host,
-		port,
-		dbName,
-		timeout)
+type mysqlHandler struct {
+	host     string
+	port     int32
+	username string
+	password string
+	dbName   string
+	timeout  string
+	DB       *gorm.DB
+}
 
-	log.Printf("[jnvwa] connect mysql with host=%s, port=%d, username=%s, password=%s, dbName=%s", host, port, username, password, dbName)
+// generate mysqlHandler
+func GetMysqlHandler(host string, port int32, username, password, dbName string) *mysqlHandler {
+	mh := &mysqlHandler{
+		host:     host,
+		port:     port,
+		username: username,
+		password: password,
+		dbName:   dbName,
+		timeout:  timeout,
+	}
+	mh.mustConnectMysql()
+	return mh
+}
+
+// connect to Mysql
+func (handler *mysqlHandler) connectMysql() error {
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?parseTime=True&loc=Local&timeout=%s",
+		handler.username,
+		handler.password,
+		handler.host,
+		handler.port,
+		handler.dbName,
+		handler.timeout)
+
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return db, nil
+	handler.DB = db
+
+	return nil
+}
+
+// must connect to Mysql, if fail, then panic
+func (handler *mysqlHandler) mustConnectMysql() {
+	err := handler.connectMysql()
+	if err != nil {
+		panic(err)
+	}
+}
+
+// Get gorm.DB
+func (handler *mysqlHandler) GetDB() *gorm.DB {
+	return handler.DB
 }

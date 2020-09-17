@@ -31,9 +31,9 @@ func TestConnectMysql(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			res, err := ConnectMysql(tt.args.host, tt.args.port, tt.args.username, tt.args.password, tt.args.dbName)
-			assert.Equal(t, err, nil)
-			assert.NotEqual(t, res, nil)
+			mh := GetMysqlHandler(tt.args.host, tt.args.port, tt.args.username, tt.args.password, tt.args.dbName)
+			db := mh.GetDB()
+			assert.NotEqual(t, db, nil)
 		})
 	}
 }
