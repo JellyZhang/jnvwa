@@ -12,6 +12,7 @@ const (
 	timeout = "10s" //连接超时，10秒
 )
 
+// 连接Mysql
 func ConnectMysql(host string, port int32, username, password, dbName string) (*gorm.DB, error) {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?parseTime=True&loc=Local&timeout=%s",
 		username,

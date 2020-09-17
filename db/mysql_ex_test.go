@@ -18,16 +18,16 @@ func TestConnectMysql(t *testing.T) {
 		name string
 		args args
 	}{
-		{
-			name: "连接成功",
-			args: args{
-				host:     "10.129.50.89",
-				port:     3306,
-				username: "root",
-				password: "123456",
-				dbName:   "mybase",
-			},
-		},
+		//{
+		//name: "连接成功",
+		//args: args{
+		//host:     "10.129.50.89",
+		//port:     3306,
+		//username: "root",
+		//password: "123456",
+		//dbName:   "mybase",
+		//},
+		//},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
