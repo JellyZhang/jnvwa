@@ -1,4 +1,4 @@
-module jnvwa
+module github.com/jellyzhang/jnvwa
 
 go 1.15
 
